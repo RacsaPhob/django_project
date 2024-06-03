@@ -1,0 +1,63 @@
+{% load static  %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню - Кофейня "Аромат утра"</title>
+    <link rel="stylesheet" href="{% static 'menu/index.css'%}">
+</head>
+<body>
+    <header>
+
+        <h1>Меню</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'main' %}">Главная |</a></li>
+            <li><a href="{% url 'menu' %}?category=all">Все категории</a></li>
+
+            {% for c in cats %}
+                {% if c.value == curent_cat %}
+                <li>{{ c.value }}</li>
+                {% else %}
+                <li><a href="?category={{ c.value }}">{{ c.value }}</a></li>
+                {% endif %}
+
+            {% endfor %}
+        </ul>
+    </nav>
+    <section class="menu-section">
+        {% for el in menu %}
+            <div class="menu-item">
+                {% if 'menu' in el.image.url  %}
+                    <img class="menu_image" src="{{el.image.url}}">
+                {% endif %}
+                <a href="{{ el.get_absolute_url }}?prev={{curent_cat}}"><h2>{{ el.name }}</h2></a>
+                 <p>${{ el.price }}</p>
+            </div>
+        {% endfor %}
+    </section>
+        {% if page_obj.has_other_pages %}
+    <div class="pagination">
+{% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+{% endif %}
+
+{% for num in paginator.page_range %}
+    {% if page_obj.number == num %}
+        <strong>{{ num }}</strong>
+    {% else %}
+        {% if curent_cat %}
+            <a href="?page={{ num }}&category={{curent_cat}}">{{ num }}</a>
+        {% else %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+{% endif %}
+    </div>
+{% endif %}

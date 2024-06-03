@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр аккаунта пользователя</title>
+    <link rel="stylesheet" href="{% static 'main/css/account.css' %}">
+</head>
+<body>
+<a href="/" class="main_a">Главная</a></li>
+        <h1>Профиль</h1>
+
+    <div class="container">
+        <div class="user-info">
+            <div class="avatar">
+                <!-- Вывод аватарки пользователя -->
+                <img src="{{ user.avatar.url }}" alt="Аватар пользователя">
+            </div>
+            <div class="details">
+                <p><strong>Имя:</strong> {{ user.first_name }}</p>
+
+                <p><strong>Логин:</strong> {{ user.username}}</p>
+
+                <p><strong>Баланс:</strong> {{ user.balance }}$</p>
+                <a class="top_up"> пополнить</a>
+            </div>
+        </div>
+
+    </div>
+<a class="edit-button", href="{% url 'account_edit' %}"> изменить</a>
+</body>
+</html>

@@ -1,0 +1,173 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 0;
+}
+
+
+
+.container {
+    width: 800px;
+    margin: 0 ;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar img {
+
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    margin-right: 100px;
+    border: 2px solid #ccc; /* Граница вокруг аватарки */
+}
+
+.details {
+    flex-grow: 1;
+}
+
+.details p {
+    margin-bottom: 10px;
+}
+
+/* Стили для ссылок */
+a {
+    display: block; /* Превращаем ссылку в блочный элемент */
+    text-align: center; /* Выравнивание текста по центру */
+    margin-bottom: 20px; /* Отступ снизу */
+    text-decoration: none; /* Убираем подчеркивание ссылки */
+    color: #333; /* Цвет текста */
+    font-size: 20px
+}
+.top_up {
+
+
+    background-color: #ddd;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
+
+.edit-button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    text-align: center;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.edit_ava {
+    text-align: left;
+    margin-left: 120px;
+    background-color: #ddd;
+    max-width: 90px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ava {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 20%;
+    width: 150px;
+    height: 100px;
+    margin-top: 10px;
+
+}
+
+.ava-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: block;
+
+
+}
+
+.error {
+    color: red;
+
+}
+label {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+section {
+    width: 500px; /* Максимальная ширина раздела */
+    margin: 0 auto; /* Центрируем раздел на странице */
+    padding: 30px;
+}
+
+.field {
+    padding: 10px;
+}
+
+.submit {
+    display: block; /* Сделать кнопку блочным элементом */
+    margin: 0 auto;
+    margin-top: 40px;
+
+}
+
+.password_win {
+    position : absolute;
+    display: none;
+    width: 35%;
+    left: 33%;
+    top: 140px;
+    height: 400px;
+    background-color: #ccc;
+    border-radius: 15px;
+}
+
+.pass_field {
+    padding: 0 34%;
+    width:  200px;
+    height: 15px;
+
+
+    font-size:25px;
+    font-family: Tahoma;
+}
+
+.pass_win_text {
+    text-align: center; /* Выравнивание текста по центру */
+    text-decoration: none; /* Убираем подчеркивание ссылки */
+    font-size: 27px;
+}
+.label_pass {
+
+    text-align: center;
+    font-size: 22px;
+
+}
+#back_but {
+    background-color: #333;
+    width: 30px;
+    height: 30px;
+    float: right;
+    margin: 5px;
+}
+
+#pass_er {
+text-align: center;
+}

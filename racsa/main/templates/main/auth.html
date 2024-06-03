@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>auth</title>
+    <link rel="stylesheet" href="{%static 'main/css/add_review.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Регистрация</h1>
+    </header>
+    <section>
+    <a href="/">Главная</a></li>
+        <form  method="post" onsubmit="return checkForm(this)">
+            {% csrf_token %}
+            {% for field in form %}
+            <label class="label">  {{field.label}}</label>
+            <label id="{{field.name}}Error" class="error"></label>
+            <div class="error"> {{field.errors}} </div>{{ field}}
+            {% endfor %}
+
+            <button type="submit">Зарегистрироваться</button>
+    </section>
+<script src="{% static 'main/js/auth.js' %}"></script>
+</body>
+</html>

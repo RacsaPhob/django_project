@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр аккаунта пользователя</title>
+    <link rel="stylesheet" href="{% static 'main/css/account.css' %}">
+</head>
+<body>
+    <a href="{% url 'account' %}" class="main_a">Назад</a>
+    <h1>Настройка профиля</h1>
+    <section>
+        <form method="post" enctype="multipart/form-data" onsubmit="return checkForm(this)">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.field.widget.input_type == 'file' %}
+                    <div class="field">
+                        <button id="chooseAvatarButton" class="ava-button" type="button">Изменить аватарку</button>
+                        <div class="error"> {{ field.errors }} </div>
+                        <img class="ava" id="avatarPreview" src="{% if temp_avatar %} {{temp_avatar }}  {% else %}{{ user.avatar.url }}  {% endif %}" alt="Avatar">
+                    </div>
+                {% elif field.name != 'password_valid' %}
+                    <label class="label" for="{{ field.id_for_label }}">  {{ field.label }}</label>
+                    <div class="error"> {{ field.errors }} </div>
+                    <div class="field"> {{ field }} </div>
+                {% else %}
+                    </section>
+                    <div class="password_win" id="pass_win" {% if password_error %}style="display:block;"{% endif %}>
+                        <button id="back_but" type="button"></button>
+                        <h4 class="pass_win_text"> для изменения данных необходимо пройти валидацию</h4>
+                        <p class="label_pass" for="{{ field.id_for_label }}">  {{ field.label }}</p>
+                    <div class="error" id="pass_er"> {{ field.errors }} </div>
+
+                        <div class="pass_field"> {{field}}</div>
+                        <button class="submit" type="submit" >подтвердить</button>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        <button class="submit" type="button" onclick="win_show()">Сохранить изменения</button>
+        <input type="file" id="avatarInput" name="avatar" style="display:none" >
+
+    </form>
+    <script src="{%static 'main/js/account_edit.js'%}" >
+    </script>
+</body>
+</html>

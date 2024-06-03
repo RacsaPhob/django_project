@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кофейня "Аромат утра"</title>
+    <link rel="stylesheet" href="{%static 'main/css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать в кофейню "Аромат утра"!</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="about">О нас</a></li>
+            <li><a href="menu/?category=all">Меню</a></li>
+            <li><a href="contacts">Контакты</a></li>
+            {% if user.is_authenticated %}
+                <li class="right_li"><a href="account">{{user.username}}</a></li>
+                <li class="right_li"><a href="log_out">выйти</a></li>
+
+            {% else %}
+                <li class="right_li"><a href="log_in">Войти</a></li>
+                <li class="right_li"><a href="auth">Зарегистрироваться</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    <section id="about">
+        <h2>О нас</h2>
+        <p>Мы рады предложить вам лучший кофе в городе! Посетите нашу уютную кофейню и насладитесь атмосферой и вкусом.</p>
+    </section>
+    <section id="menu">
+        <h2>Меню</h2>
+        <ul>
+            <li>Американо - $2.50</li>
+            <li>Капучино - $3.00</li>
+            <li>Латте - $3.50</li>
+            <li>Эспрессо - $2.00</li>
+        </ul>
+    </section>
+    <section id="contact">
+        <h2>Контакты</h2>
+        <p>Адрес: ул. Пушкина, 10</p>
+        <p>Телефон: 123-456-7890</p>
+    </section>
+
+     <aside id="reviews">
+
+        <div class="rev_header">
+        <h2 class="rev_header">Отзывы клиентов</h2>
+         <a href="add_review" class="rev_header"> добавить отзыв</a>
+        </div>
+
+        <div class="scroll-box">
+            {%for el in revs%}
+
+            <img class="avatar" src="{{el.author.avatar.url}}">
+                <div class="testimonial">
+                    <h3>{{el.author.username}}</h3>
+                    <p>{{el.text}}</p>
+                </div>
+            <br>
+
+            {%endfor%}
+
+
+            <!-- Добавьте больше отзывов по необходимости -->
+        </div>
+    </aside>
+    <footer>
+        <p>&copy; 2023 Кофейня "Аромат утра"</p>
+    </footer>
+<script src="{%static 'main/js/Script1.js'%}"></script>
+</body>
