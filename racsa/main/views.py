@@ -83,7 +83,7 @@ class account_edit(LoginRequiredMixin, FormView):
             form.add_error('password_valid', 'Неверный пароль')
             return self.form_invalid(form)
 
-
+        #ждлооваыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыыы
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['instance'] = self.request.user  # Передаем текущего пользователя в качестве экземпляра формы
