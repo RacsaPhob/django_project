@@ -1,0 +1,68 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 600px; /* Ограничиваем ширину текста описания кофе */
+    margin: 0 auto; /* Центрируем блок текста */
+    text-align: center;
+}
+
+h3 {
+    color: #333;
+    font-size: 20px;
+    margin-top: 20px;
+}
+img {
+    width: 400px; /* Ширина изображения */
+    height: 400px; /* Высота изображения */
+    border-radius: 50%; /
+}
+
+
+
+
+nav {
+    text-align: left;
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}

@@ -1,0 +1,14 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for ob in p %}
+    {{ ob }}
+{% endfor %}
+Текущая страница: {{ p.number }} из {{ p.paginator.num_pages }}
+</body>
+</html>

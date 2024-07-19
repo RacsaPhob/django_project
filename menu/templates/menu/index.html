@@ -1,0 +1,101 @@
+{% load static %}
+{% load CustomTags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню - Кофейня "Аромат утра"</title>
+    <link rel="stylesheet" href="{% static 'menu/index.css'%}">
+</head>
+<body>
+    <header>
+        <h1>Меню</h1>
+    </header>
+    {{ static }}
+    <nav>
+        <ul>
+            <li><a href="{% url 'main' %}">Главная |</a></li>
+            <li><a href="{% url 'menu' %}?category=all">Все категории</a></li>
+            {% for c in cats %}
+                {% if c.value == current_cat %}
+                <li>{{ c.value }}</li>
+                {% else %}
+                <li><a href="?category={{ c.value }}">{{ c.value }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+
+    <section class="menu-section">
+        {% for el in menu %}
+            <div class="menu-item">
+                {% if 'menu' in el.image.url  %}
+                    <img class="menu_image" src="{{el.image.url}}">
+                {% endif %}
+
+                {% if el.quantity != 0 %}
+                    <div class="regulation_amount">
+                    <button class="minus_but" onclick="amount_pressed({{el.pk}},'minus')"> - </button>
+                        <p class="amount_show" id="amount_{{el.pk}}">
+                            {% find_item_amount el purchases %}
+                            </p>
+                    <button class="plus_but" onclick="amount_pressed({{el.pk}},'plus')"> + </button>
+                    </div>
+                {% endif %}
+
+                <a href="{{ el.get_absolute_url }}?prev={{current_cat}}"><h2>{{ el.name }}</h2></a>
+                {% if el.discount %}
+                    <s>${{ el.price }}</s>
+                    <p class="price-with-discount" >${{ el.get_price_with_discount }}</p>
+                {% else %}
+                    <p >${{el.price}}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </section>
+    <div class="cart-section" id="cart-div">
+        {% if cart %}
+            <div id="cart-purchases">
+                <h2>корзина</h2>
+                {% for el in purchases %}
+                    <div class="cart-item" id="cart-item-id-{{el.item.pk}}">
+                        <button class="cart-item-delete" onclick="amount_pressed({{el.item.pk}}, 'delete')">X</button>
+                        <p class="cart-item-name" >{{ el.item.name }} (<span id="cart-item-name-id-{{el.item.pk}}">{{el.amount}}</span> шт.)</p>
+                        {% if el.item.discount %}
+                            <s class="price-without-discount", id="cart-price-without-discount-{{el.item.id}}">${% multiply el.item.price el.amount %}</s>
+                        {% endif %}
+                        <h4 class="cart-item-price" id="cart-price-id-{{el.item.pk}}">${{ el.get_full_price }}</h4>
+                    </div>
+                {% endfor %}
+            </div>
+
+        <h3 id="total-price">итог: ${{ cart.get_total_price }}</h3>
+        {% endif %}
+    </div>
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}&category={{curent_cat}}">Предыдущая</a>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <strong>{{ num }}</strong>
+                {% else %}
+                    {% if curent_cat %}
+                        <a href="?page={{ num }}&category={{curent_cat}}">{{ num }}</a>
+                    {% else %}
+                        <a href="?page={{ num }}">{{ num }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&category={{curent_cat}}">Следующая</a>
+            {% endif %}
+        </div>
+    {% endif %}
+<script src="{% static 'menu/index.js' %}"></script>
+</body>
+</html>

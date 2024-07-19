@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр аккаунта пользователя</title>
+    <link rel="stylesheet" href="{% static 'account_user/css/account.css' %}">
+</head>
+<body>
+    <h2>Вы уверены, что хотите удалить аккаунт?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Да</button>
+    </form>
+</body>
