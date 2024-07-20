@@ -1,14 +1,13 @@
-import urllib.parse
 import secrets
 import string
-import requests
 
 from django.conf import settings
 from allauth.socialaccount.models import SocialApp
-from .models import user
 from django.contrib.auth.hashers import make_password
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 
+
+from requests_oauthlib import OAuth2Session
 
 
 def get_google_service_url(request):
@@ -17,35 +16,55 @@ def get_google_service_url(request):
         может выбрать google account для входа на сайт
     """
 
-    base_url = 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?'
-    state = _get_state()
+    google_session = get_oauth_session(SocialApp.objects.get(name='google'))
+    authorization_url, state = get_authorization_url_and_state(google_session)
+
+    # Сохраните состояние в сессии, чтобы проверить его после
     request.session['oauth_state'] = state
-    # создание GET параметров
-    params = {
-              'scope': _get_scopes(),
-              'client_id': SocialApp.objects.get(name='google').client_id,
-              'redirect_uri': 'http://127.0.0.1:8000/accounts/google/login/callback/',
-              'response_type': 'code',
-              'access_type': 'online',
-              'flowName': 'GeneralOAuthFlow',
-              'service': 'lso',
-              'o2v': '2',
-              'state': state
-              }
-    params_encoded = urllib.parse.urlencode(params)
-    url_params_encoded = params_encoded.replace('+',  '%20')
-    return base_url + url_params_encoded
+    return authorization_url
 
 
-def _get_scopes():
-    """Возвращает строку со scopes разделенных пробелом"""
+def get_oauth_session(google, state=None, scope=True):
+    """Возвращает OAuth сессию, принимает объект google из модели SocialApp"""
 
-    scopes = ''
-    for scope in settings.SOCIALACCOUNT_PROVIDERS['google']['SCOPE']:
-        scopes += scope + ' '
-    scopes = scopes[0:-1]
+    if scope:
+        scope = settings.SOCIALACCOUNT_PROVIDERS['google']['SCOPE']
+    else:
+        scope = None
+    return OAuth2Session(google.client_id,
+                         redirect_uri='https://127.0.0.1:8000/accounts/google/login/callback/',
+                         scope=scope,
+                         state=state
+                         )
 
-    return scopes
+
+def get_authorization_url_and_state(session):
+    """Возвращает готовый url, где пользователь может выбрать google аккаунт для входа"""
+    return session.authorization_url(
+        'https://accounts.google.com/o/oauth2/auth',
+        access_type="offline",  # получить refresh токен тоже
+        prompt="select_account")    # у пользователя всегда будет возможность выбрать google аккаунт
+
+
+def google_fetch_token(google_session, google_app, request):
+    """Принимает google session и у него обменивает код из url на токен"""
+
+    return google_session.fetch_token(
+        'https://accounts.google.com/o/oauth2/token',
+        client_secret=google_app.secret,
+        authorization_response=request.build_absolute_uri())  # полный uri текущей страницы(там находится code)
+
+
+def get_google_user(request):
+    """Создаёт новую сессию без scope, в этой сессии обменивает код на токен.
+        Возвращает словарь с данными полученными от аккаунта google пользователя
+        """
+
+    google_app = SocialApp.objects.get(name='google')
+    google_session = get_oauth_session(google_app, request.session.get('oauth_state'), scope=False)
+    token = google_fetch_token(google_session, google_app, request)
+
+    return google_session.get('https://www.googleapis.com/oauth2/v1/userinfo').json()
 
 
 def _get_state(length=16):
@@ -55,33 +74,8 @@ def _get_state(length=16):
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
-def exchange_code_for_token(code):
-    """обменивает код полученный от google accounts на access token"""
-
-    provider = SocialApp.objects.get(name='google')
-    token_url = 'https://oauth2.googleapis.com/token'
-    data = {
-        'code': code,
-        'client_id': provider.client_id,
-        'client_secret': provider.secret,
-        'redirect_uri': 'http://127.0.0.1:8000/accounts/google/login/callback/',
-        'grant_type': 'authorization_code'
-    }
-    response = requests.post(token_url, data=data)
-    return response.json()
-
-
-def get_user_inf(access_token):
-    """Заходит на google api под именем пользователя и получает информацию о нем"""
-
-    user_info_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-    headers = {'Authorization': f'Bearer {access_token}'}
-    response = requests.get(user_info_url, headers=headers)
-    return response.json()
-
-
-def create_user(user_inf):
-    """Создаёт пользователя с помощью полученной информации от get_user_inf"""
+def create_user_by_google_info(user_inf, user_model):
+    """Создаёт пользователя с помощью полученной информации от google_api"""
 
     password = create_hashed_password(length=10)
     username = user_inf.get('name')
@@ -94,15 +88,16 @@ def create_user(user_inf):
     else:
         raise PermissionDenied('email is not verified')
 
-    check_user = get_user_by_email_or_none(email=email)
+    check_user = get_user_by_email_or_none(email, user_model)
     if check_user:
         if not check_user.first_name:
             check_user.first_name = given_name
+            check_user.save()
 
         return check_user
 
     else:
-        new_user, _ = user.objects.get_or_create(
+        new_user, _ = user_model.objects.get_or_create(
                                                 password=password,
                                                 username=username,
                                                 first_name=given_name,
@@ -118,21 +113,10 @@ def create_hashed_password(length):
     return make_password(password)
 
 
-def get_user_by_email_or_none(email):
+def get_user_by_email_or_none(email, user_model):
     """Проверяет есть ли пользователь с таким email в бд"""
 
     try:
-        return user.objects.get(email=email)
+        return user_model.objects.get(email=email)
     except ObjectDoesNotExist:
         return None
-
-
-def user_by_code(code):
-    """Создаёт пользователя с помощью данный полученных от
-        api google     """
-
-    response = exchange_code_for_token(code)
-    user_inf = get_user_inf(response['access_token'])
-    new_user = create_user(user_inf)
-
-    return new_user

@@ -1,6 +1,10 @@
-
+# python manage.py runserver_plus --cert-file cert/certificate.crt --key-file cert/privateKey.key
 import os
 from pathlib import Path
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -33,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'django_extensions',
 
     'captcha',
     'rest_framework',
@@ -85,7 +90,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.account.auth_backends.AuthenticationBackend',
 
 ]
 # Database
@@ -136,10 +141,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
-
-
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # Default primary key field type
@@ -152,7 +154,7 @@ INTERNAL_IPS = [
     "127.0.0.1"
 ]
 MEDIA_URL = '/images/'
-#MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 CAPTCHA_FONT_SIZE = 40
 
@@ -164,7 +166,7 @@ LOGIN_URL = 'log_in'
 LOGIN_REDIRECT_URL = '/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES':[
+    'DEFAULT_RENDERER_CLASSES': [
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer"
     ],
